@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sophia — Una nueva experiencia de vida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#000;
+    --fg:#fff;
+    --bg-soft:#0b0b0c;
+    --paper:#f5f5f7;
+    --ink:#1d1d1f;
+    --muted:#86868b;
+    --rule:rgba(255,255,255,0.08);
+    --rule-dark:rgba(0,0,0,0.08);
+    --gold: oklch(0.84 0.06 82);
+    --gold-soft: oklch(0.88 0.04 82);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  html,body{background:#000;color:#fff;font-family:'Manrope', 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif;font-weight:400;line-height:1.4;letter-spacing:-0.005em}
+  body{overflow-x:hidden}
+  img,svg{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  ::selection{background:var(--gold);color:#000}
+
+  /* Layout */
+  .wrap{width:100%;max-width:1480px;margin:0 auto;padding:0 40px}
+  @media(max-width:720px){.wrap{padding:0 24px}}
+
+  /* Type scale */
+  .eyebrow{font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:var(--muted)}
+  .display{font-weight:200;letter-spacing:-0.04em;line-height:0.95;font-size:clamp(56px,9.5vw,168px)}
+  .h1{font-weight:200;letter-spacing:-0.035em;line-height:1.02;font-size:clamp(40px,6vw,96px)}
+  .h2{font-weight:300;letter-spacing:-0.025em;line-height:1.08;font-size:clamp(32px,4vw,64px)}
+  .h3{font-weight:400;letter-spacing:-0.02em;line-height:1.15;font-size:clamp(22px,2vw,32px)}
+  .lede{font-weight:300;font-size:clamp(20px,1.6vw,28px);line-height:1.4;letter-spacing:-0.01em;color:rgba(255,255,255,0.82)}
+  .body-l{font-size:18px;line-height:1.55;color:rgba(255,255,255,0.74)}
+  .body-m{font-size:16px;line-height:1.6;color:rgba(255,255,255,0.7)}
+  .mono{font-family:'JetBrains Mono', ui-monospace, monospace;font-weight:400}
+
+  /* Light theme section */
+  .light{background:var(--paper);color:var(--ink)}
+  .light .lede{color:#3a3a3c}
+  .light .body-l, .light .body-m{color:#3a3a3c}
+  .light .eyebrow{color:#6e6e73}
+  .light .rule{border-color:var(--rule-dark)}
+
+  .rule{border-color:var(--rule)}
+
+  /* Reveal */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity 1.1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:translateY(0)}
+  .reveal.d1{transition-delay:.08s}
+  .reveal.d2{transition-delay:.16s}
+  .reveal.d3{transition-delay:.24s}
+  .reveal.d4{transition-delay:.32s}
+
+  /* Nav */
+  .nav{position:fixed;inset:0 0 auto 0;height:52px;z-index:50;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:rgba(0,0,0,0.55);border-bottom:1px solid rgba(255,255,255,0.06);transition:background .4s ease, color .4s ease, border-color .4s ease}
+  .nav.is-light{background:rgba(245,245,247,0.78);color:var(--ink);border-bottom-color:rgba(0,0,0,0.08)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;max-width:1480px;margin:0 auto;padding:0 28px;font-size:13px}
+  .nav-mark{font-weight:600;letter-spacing:0.32em;font-size:12px}
+  .nav-links{display:flex;gap:28px}
+  .nav-links a{opacity:.7;transition:opacity .2s}
+  .nav-links a:hover{opacity:1}
+  .nav-cta{font-weight:500;letter-spacing:0.02em}
+  @media(max-width:780px){ .nav-links{display:none} }
+
+  /* Hero */
+  .hero{position:relative;height:100vh;min-height:720px;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 0 64px;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 30%, rgba(255,255,255,0.06), rgba(0,0,0,0) 60%), linear-gradient(180deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.78) 100%)}
+  .hero-grid{position:absolute;inset:0;opacity:.35;background-image:linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);background-size:80px 80px;mask-image:radial-gradient(60% 60% at 50% 50%, #000 30%, transparent 80%)}
+  .hero-aurora{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:90vw;max-width:1100px;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(closest-side, oklch(0.84 0.06 82 / 0.18), transparent 70%);filter:blur(20px)}
+  .hero-top{position:absolute;top:88px;left:0;right:0}
+  .hero-top .wrap{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted)}
+  .hero-meta-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block;vertical-align:middle;margin-right:10px;box-shadow:0 0 0 6px rgba(212,180,131,0.12)}
+  .hero-content{position:relative;z-index:2}
+  .hero-content .wrap{display:flex;flex-direction:column;gap:32px}
+  .hero-title{max-width:14ch}
+  .hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;flex-wrap:wrap}
+  .hero-row .lede{max-width:46ch}
+  .hero-scroll{display:inline-flex;align-items:center;gap:14px;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted)}
+  .hero-scroll-line{width:80px;height:1px;background:rgba(255,255,255,0.3);position:relative;overflow:hidden}
+  .hero-scroll-line::after{content:"";position:absolute;inset:0;background:#fff;transform:translateX(-100%);animation:scrollLine 2.4s cubic-bezier(.65,0,.35,1) infinite}
+  @keyframes scrollLine{0%{transform:translateX(-100%)}50%{transform:translateX(0)}100%{transform:translateX(100%)}}
+
+  /* Section */
+  section{padding:140px 0;position:relative}
+  @media(max-width:720px){section{padding:96px 0}}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:80px;flex-wrap:wrap}
+  .section-head .label{display:flex;align-items:center;gap:14px}
+  .section-head .label .num{font-family:'JetBrains Mono', monospace;font-size:12px;color:var(--muted)}
+  .section-head h2{max-width:18ch}
+  .section-head .lede{max-width:36ch}
+
+  /* Intro */
+  .intro h1 em{font-style:normal;color:var(--gold)}
+  .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;margin-top:72px;padding-top:48px;border-top:1px solid var(--rule)}
+  @media(max-width:900px){.intro-grid{grid-template-columns:1fr;gap:40px}}
+
+  /* Product showcase block */
+  .showcase{display:grid;grid-template-columns:5fr 7fr;gap:80px;align-items:center}
+  .showcase.reverse{grid-template-columns:7fr 5fr}
+  @media(max-width:980px){.showcase, .showcase.reverse{grid-template-columns:1fr;gap:48px}}
+  .showcase .copy h2{margin-bottom:24px}
+  .showcase .copy .eyebrow{margin-bottom:24px}
+  .showcase .copy .lede{margin-bottom:32px}
+
+  /* Visuals */
+  .vis{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:5/4;background:#0a0a0a}
+  .vis.tall{aspect-ratio:4/5}
+  .vis.wide{aspect-ratio:16/9}
+  .vis-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .vis-placeholder .lbl{font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.5);padding:8px 14px;border:1px solid rgba(255,255,255,0.18);border-radius:999px;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px)}
+  .light .vis{background:#1a1a1c}
+  .light .vis-placeholder .lbl{color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.25);background:rgba(0,0,0,0.45)}
+
+  /* Stat row */
+  .stats{display:grid;grid-template-columns:repeat(3, 1fr);gap:1px;background:var(--rule);border-block:1px solid var(--rule);margin-top:48px}
+  .light .stats{background:var(--rule-dark);border-color:var(--rule-dark)}
+  .stat{background:#000;padding:32px 24px}
+  .light .stat{background:var(--paper)}
+  .stat .v{font-weight:200;font-size:clamp(36px,4.2vw,64px);letter-spacing:-0.03em;line-height:1;margin-bottom:12px}
+  .stat .l{font-size:13px;color:var(--muted);letter-spacing:-0.01em;line-height:1.4}
+  .light .stat .l{color:#6e6e73}
+  @media(max-width:780px){.stats{grid-template-columns:1fr 1fr}}
+
+  /* Feature pills */
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .pill{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--rule);color:rgba(255,255,255,0.8)}
+  .light .pill{border-color:var(--rule-dark);color:#3a3a3c}
+
+  /* Feature cards 3x */
+  .feature-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;margin-top:64px}
+  @media(max-width:900px){.feature-grid{grid-template-columns:1fr;gap:16px}}
+  .fcard{border:1px solid var(--rule);border-radius:24px;padding:36px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));transition:transform .5s ease, border-color .5s ease, background .5s ease}
+  .fcard:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.18);background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01))}
+  .light .fcard{border-color:var(--rule-dark);background:#fff}
+  .light .fcard:hover{border-color:rgba(0,0,0,0.18)}
+  .fcard .num{font-family:'JetBrains Mono', monospace;font-size:11px;color:var(--muted);letter-spacing:0.2em}
+  .fcard .t{font-size:22px;font-weight:400;letter-spacing:-0.02em;margin-top:8px}
+
+  /* Voice control marquee */
+  .voice-track{display:flex;gap:48px;font-weight:200;font-size:clamp(40px,6vw,96px);letter-spacing:-0.03em;color:rgba(255,255,255,0.18);white-space:nowrap;animation:marquee 40s linear infinite}
+  .voice-track span{display:inline-flex;align-items:center;gap:48px}
+  .voice-track span::after{content:"·";color:var(--gold)}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .voice-wrap{overflow:hidden;mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);margin-block:48px;padding-block:8px}
+
+  /* Climate / icon list */
+  .climates{display:grid;grid-template-columns:repeat(4, 1fr);gap:1px;background:var(--rule);border-block:1px solid var(--rule);margin-top:48px}
+  .climates > div{background:#000;padding:28px;display:flex;flex-direction:column;gap:8px}
+  .light .climates{background:var(--rule-dark);border-color:var(--rule-dark)}
+  .light .climates > div{background:var(--paper)}
+  .climates .ico{width:36px;height:36px;border:1px solid rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .light .climates .ico{border-color:rgba(0,0,0,0.18)}
+  .climates .n{font-size:14px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;margin-top:12px}
+  .climates .s{font-size:13px;color:var(--muted)}
+  @media(max-width:780px){.climates{grid-template-columns:repeat(2,1fr)}}
+
+  /* Security ring */
+  .security-vis{aspect-ratio:1/1;position:relative;display:flex;align-items:center;justify-content:center}
+  .sec-core{position:absolute;width:34%;height:34%;border-radius:50%;background:radial-gradient(closest-side, oklch(0.84 0.06 82 / 0.6), oklch(0.84 0.06 82 / 0));display:flex;align-items:center;justify-content:center;color:#000;font-weight:600;letter-spacing:0.25em;font-size:11px;text-transform:uppercase}
+  .sec-core .dot{width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 0 32px var(--gold)}
+  .sec-ring{position:absolute;border:1px solid rgba(255,255,255,0.1);border-radius:50%}
+  .light .sec-ring{border-color:rgba(0,0,0,0.1)}
+  .sec-ring.r1{width:50%;height:50%}
+  .sec-ring.r2{width:72%;height:72%}
+  .sec-ring.r3{width:94%;height:94%}
+  .sec-tag{position:absolute;font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.75);background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.12);padding:6px 12px;border-radius:999px;backdrop-filter:blur(8px)}
+  .light .sec-tag{color:#1d1d1f;background:rgba(255,255,255,0.85);border-color:rgba(0,0,0,0.1)}
+
+  /* GAIA */
+  .gaia{background:#000;color:#fff;position:relative;overflow:hidden}
+  .gaia::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 40%, oklch(0.84 0.06 82 / 0.18), transparent 70%);pointer-events:none}
+  .gaia-stage{display:grid;grid-template-columns:1fr 1.1fr;gap:80px;align-items:center;position:relative;z-index:1}
+  @media(max-width:980px){.gaia-stage{grid-template-columns:1fr;gap:48px}}
+  .gaia-key{aspect-ratio:1/1.2;border-radius:32px;background:linear-gradient(180deg,#1a1a1c, #050505);border:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .gaia-key::after{content:"";position:absolute;inset:14%;border-radius:24px;background:linear-gradient(135deg, oklch(0.96 0.02 82), oklch(0.78 0.04 82) 50%, oklch(0.6 0.03 82));box-shadow:0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4)}
+  .gaia-key .glyph{position:relative;z-index:1;font-family:'JetBrains Mono', monospace;letter-spacing:0.5em;font-size:12px;color:#000;mix-blend-mode:multiply;font-weight:600;padding-left:0.5em}
+  .gaia-feat{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.08);margin-top:48px}
+  .gaia-feat > div{background:#000;padding:28px}
+  .gaia-feat .t{font-size:15px;font-weight:500;letter-spacing:-0.01em;margin-bottom:6px}
+  .gaia-feat .d{font-size:13px;color:var(--muted);line-height:1.5}
+  @media(max-width:720px){.gaia-feat{grid-template-columns:1fr}}
+
+  /* Why pillars */
+  .pillars{display:grid;grid-template-columns:repeat(2, 1fr);gap:24px;margin-top:64px}
+  @media(max-width:900px){.pillars{grid-template-columns:1fr}}
+  .pillar{border:1px solid var(--rule-dark);border-radius:24px;padding:48px;background:#fff;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden}
+  .pillar .pn{font-family:'JetBrains Mono', monospace;font-size:11px;color:#6e6e73;letter-spacing:0.2em}
+  .pillar h3{font-size:28px;font-weight:400;letter-spacing:-0.02em;line-height:1.2}
+  .pillar p{font-size:15px;line-height:1.55;color:#3a3a3c}
+  .pillar::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(closest-side, oklch(0.84 0.06 82 / 0.18), transparent 70%);pointer-events:none}
+
+  /* App section */
+  .app-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  @media(max-width:980px){.app-grid{grid-template-columns:1fr}}
+  .phone{aspect-ratio:9/19;max-width:340px;margin:0 auto;border-radius:48px;background:linear-gradient(180deg, #111, #000);border:1px solid rgba(255,255,255,0.08);padding:14px;position:relative;box-shadow:0 60px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)}
+  .phone-screen{height:100%;border-radius:36px;background:linear-gradient(180deg, #0a0a0a, #050505);overflow:hidden;position:relative;display:flex;flex-direction:column;padding:28px 22px;gap:20px}
+  .phone .notch{position:absolute;left:50%;top:22px;transform:translateX(-50%);width:96px;height:26px;background:#000;border-radius:14px;z-index:2}
+  .app-hello{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-top:24px}
+  .app-greeting{font-size:24px;font-weight:300;letter-spacing:-0.02em;line-height:1.2;color:#fff}
+  .app-greeting .g{color:var(--gold)}
+  .app-tile{border:1px solid rgba(255,255,255,0.08);background:linear-gradient(180deg, rgba(255,255,255,0.04), transparent);border-radius:18px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+  .app-tile .tn{font-size:13px;font-weight:500}
+  .app-tile .ts{font-size:11px;color:var(--muted)}
+  .app-tile .tv{font-size:12px;color:var(--gold);font-family:'JetBrains Mono', monospace}
+  .app-dial{width:14px;height:14px;border-radius:50%;background:var(--gold);box-shadow:0 0 16px var(--gold)}
+
+  /* Numbers list */
+  .num-list{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border-block:1px solid var(--rule);margin-top:64px}
+  .num-list > div{background:#000;padding:32px 24px}
+  .num-list .v{font-weight:200;font-size:clamp(42px,4.4vw,72px);letter-spacing:-0.035em;line-height:1;color:#fff}
+  .num-list .l{font-size:13px;color:var(--muted);margin-top:10px}
+  @media(max-width:900px){.num-list{grid-template-columns:1fr 1fr}}
+
+  /* CTA */
+  .cta{padding:160px 0 120px;text-align:center;background:#000;color:#fff;position:relative;overflow:hidden}
+  .cta-glow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120vw;max-width:1600px;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(closest-side, oklch(0.84 0.06 82 / 0.14), transparent 60%);pointer-events:none}
+  .cta h2{max-width:18ch;margin:0 auto 32px;position:relative}
+  .cta .lede{max-width:46ch;margin:0 auto 56px;position:relative}
+  .btn{display:inline-flex;align-items:center;gap:12px;padding:18px 30px;background:#fff;color:#000;border-radius:999px;font-weight:500;letter-spacing:-0.01em;font-size:15px;transition:transform .3s ease, background .3s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.25)}
+  .btn-ghost:hover{background:rgba(255,255,255,0.05)}
+  .btn-row{display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+  /* Footer */
+  footer{padding:80px 0 40px;border-top:1px solid var(--rule);background:#000;color:#fff}
+  footer .wrap{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
+  footer .col{display:flex;flex-direction:column;gap:8px}
+  footer .col .h{font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  footer .col a{font-size:14px;opacity:.8}
+  footer .legal{margin-top:64px;display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);letter-spacing:0.05em;flex-wrap:wrap;gap:12px}
+
+  /* Sticky chapter index */
+  .chapter-dots{position:fixed;left:24px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:14px;mix-blend-mode:difference;color:#fff}
+  .chapter-dots .cd{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);transition:background .3s ease, transform .3s ease;cursor:pointer;border:0}
+  .chapter-dots .cd.active{background:#fff;transform:scale(1.4)}
+  @media(max-width:980px){.chapter-dots{display:none}}
+
+  /* Subtle texture for placeholders */
+  .vis.tex{background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 14px),
+    linear-gradient(180deg, #14141a, #050505);
+  }
+  .vis.tex.light-tex{background:
+    repeating-linear-gradient(135deg, rgba(0,0,0,0.06) 0 1px, transparent 1px 14px),
+    linear-gradient(180deg, #e8e8ec, #d4d4d8);
+  }
+  .vis.warm{background:
+    radial-gradient(80% 60% at 30% 30%, oklch(0.84 0.06 82 / 0.55), transparent 60%),
+    radial-gradient(60% 80% at 80% 80%, oklch(0.7 0.05 60 / 0.4), transparent 60%),
+    #0a0807;
+  }
+  .vis.cool{background:
+    radial-gradient(80% 60% at 70% 30%, oklch(0.6 0.04 230 / 0.45), transparent 60%),
+    radial-gradient(60% 80% at 20% 80%, oklch(0.45 0.05 250 / 0.4), transparent 60%),
+    #06080a;
+  }
+  .vis.green{background:
+    radial-gradient(70% 60% at 50% 40%, oklch(0.65 0.06 145 / 0.5), transparent 60%),
+    #060807;
+  }
+
+  /* Tweaks default toggle hidden */
+
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-mark" href="#top">SOPHIA</a>
+    <div class="nav-links">
+      <a href="#sistema">Sistema</a>
+      <a href="#luces">Luces</a>
+      <a href="#audio">Audio</a>
+      <a href="#clima">Clima</a>
+      <a href="#seguridad">Seguridad</a>
+      <a href="#gaia">Gaia</a>
+      <a href="#app">App</a>
+    </div>
+    <a class="nav-cta" href="#contacto">Coordinar visita →</a>
+  </div>
+</nav>
+
+<div class="chapter-dots" id="chapterDots"></div>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" data-theme="dark" data-chapter="Inicio">
+    <img src="imagenes2/una nueva experiencia.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-aurora"></div>
+    <div class="hero-top">
+      <div class="wrap">
+        <div><span class="hero-meta-dot"></span>Propuesta · Mayo 2026</div>
+        <div>Hogares inteligentes</div>
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="wrap">
+        <div class="eyebrow reveal">Sophia · Smart Living</div>
+        <h1 class="display hero-title reveal d1">Una nueva<br/>experiencia<br/>de vida.</h1>
+        <div class="hero-row reveal d2">
+          <p class="lede">Domótica integral para hogares y espacios de alta gama. Iluminación, audio, clima, accesos, seguridad y escenas — orquestados por una sola plataforma, controlados con un toque o con la voz.</p>
+          <div class="hero-scroll">
+            <span class="hero-scroll-line"></span>
+            <span>Descubrir</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTRO / MANIFIESTO -->
+  <section id="sistema" class="intro light" data-theme="light" data-chapter="Manifiesto">
+    <div class="wrap">
+      <div class="eyebrow reveal">01 — Manifiesto</div>
+      <h1 class="h1 reveal d1" style="margin-top:24px;max-width:18ch">Mucho más que domótica. Una <em>forma de habitar</em> el espacio.</h1>
+      <div class="vis wide reveal d2" style="margin-top:48px;border-radius:24px;overflow:hidden">
+        <img src="imagenes2/1-manifiesto.png" alt="Sophia Smart Home" style="width:100%;height:100%;object-fit:cover">
+      </div>
+      <div class="intro-grid">
+        <p class="lede reveal d2">Sophia automatiza cada ambiente de manera simple y rápida, creando una experiencia a medida de cada usuario. Desde cualquier dispositivo móvil — sin importar dónde esté.</p>
+        <div class="reveal d3">
+          <p class="body-l" style="margin-bottom:24px">Un único sistema cableado, redundante y silencioso. Cada ambiente actúa como su propio servidor. Respuesta en milisegundos, incluso sin internet.</p>
+          <p class="mono" style="font-size:13px;color:#6e6e73">— Robustez de grado militar, lenguaje doméstico.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LUCES -->
+  <section id="luces" data-theme="dark" data-chapter="Luces">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">02</span>
+          <span class="eyebrow">Iluminación inteligente</span>
+        </div>
+      </div>
+      <div class="showcase">
+        <div class="copy">
+          <h2 class="h2 reveal">Ambientes cálidos.<br/>Ideas más brillantes.</h2>
+          <p class="lede reveal d1" style="margin-top:24px">Encendé, regulá y coloreá cada luz desde tu teléfono, tablet o reloj. Smart LED by Sophia crea atmósferas a medida del momento — y reduce el consumo hasta un 50%.</p>
+          <div class="pills reveal d2">
+            <span class="pill">100% dimerizables</span>
+            <span class="pill">16 millones de colores</span>
+            <span class="pill">40.000 hs de duración</span>
+            <span class="pill">3,5 W promedio</span>
+            <span class="pill">Compatible con energía alternativa</span>
+          </div>
+        </div>
+        <div class="vis reveal d2" style="aspect-ratio:5/4">
+          <img src="imagenes2/2-iluminacion.png" alt="Iluminación inteligente" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+      </div>
+
+      <div class="stats reveal">
+        <div class="stat"><div class="v">−50%</div><div class="l">Ahorro de energía eléctrica en iluminación</div></div>
+        <div class="stat"><div class="v">40k</div><div class="l">Horas de vida útil por luminaria</div></div>
+        <div class="stat"><div class="v">16M</div><div class="l">Colores y temperaturas disponibles</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIO -->
+  <section id="audio" class="light" data-theme="light" data-chapter="Audio">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">03</span>
+          <span class="eyebrow">Audio Multiroom</span>
+        </div>
+      </div>
+      <div class="showcase reverse">
+        <div class="vis reveal" style="aspect-ratio:5/4">
+          <img src="imagenes2/3-audio.png" alt="Audio Multiroom" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="copy">
+          <h2 class="h2 reveal d1">La misma canción<br/>en todas partes.<br/>O una distinta<br/>en cada ambiente.</h2>
+          <p class="lede reveal d2" style="margin-top:24px">Audio distribuido por todo el hogar. Spotify integrado nativamente en la app — sin dispositivos extra. Cambiá de tema, pausá o regulá el volumen ambiente por ambiente.</p>
+          <div class="pills reveal d3">
+            <span class="pill">Spotify nativo</span>
+            <span class="pill">Apple Music · Tidal · Deezer</span>
+            <span class="pill">Radio y multimedia</span>
+            <span class="pill">Mensajería de voz en tiempo real</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOICE MARQUEE -->
+  <section style="padding:48px 0;overflow:hidden" data-theme="dark" data-chapter="Voz">
+    <img src="imagenes2/4-control-voz.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.18;mix-blend-mode:screen">
+    <div class="voice-wrap">
+      <div class="voice-track">
+        <span>Sophia, bajá las luces</span>
+        <span>Sophia, modo cine</span>
+        <span>Sophia, abrí el portón</span>
+        <span>Sophia, 22 grados en el cuarto</span>
+        <span>Sophia, buenas noches</span>
+        <span>Sophia, bajá las luces</span>
+        <span>Sophia, modo cine</span>
+        <span>Sophia, abrí el portón</span>
+        <span>Sophia, 22 grados en el cuarto</span>
+        <span>Sophia, buenas noches</span>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px">
+      <div class="eyebrow">04 — Control por voz</div>
+      <p class="body-m" style="max-width:46ch">Toda Sophia responde a tu voz. Comandos cotidianos para manejar múltiples ambientes, escenas y dispositivos desde la propia app — sin gadgets adicionales.</p>
+    </div>
+  </section>
+
+  <!-- CLIMA -->
+  <section id="clima" data-theme="dark" data-chapter="Clima">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">05</span>
+          <span class="eyebrow">Climatización</span>
+        </div>
+      </div>
+      <div class="showcase">
+        <div class="copy">
+          <h2 class="h2 reveal">El clima perfecto<br/>en cada ambiente.</h2>
+          <p class="lede reveal d1" style="margin-top:24px">Programá la temperatura por habitación, día y horario. Sophia monitorea la actividad real del lugar y evita usos innecesarios — sin sacrificar confort.</p>
+          <p class="body-l reveal d2" style="margin-top:24px">Compatible con cualquier tipo de instalación existente.</p>
+        </div>
+        <div class="vis reveal d2" style="aspect-ratio:5/4">
+          <img src="imagenes2/5-climatizacion.png" alt="Climatización inteligente" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+      </div>
+
+      <div class="climates reveal">
+        <div>
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="12" height="7" rx="1"/><path d="M5 13h6"/></svg></div>
+          <div class="n">Split</div>
+          <div class="s">A/C convencional</div>
+        </div>
+        <div>
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M8 1v14M3 4h10M3 12h10"/></svg></div>
+          <div class="n">A/C Central</div>
+          <div class="s">Sistemas centralizados</div>
+        </div>
+        <div>
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 4c2-2 4 0 6 0s4-2 6 0M2 8c2-2 4 0 6 0s4-2 6 0M2 12c2-2 4 0 6 0s4-2 6 0"/></svg></div>
+          <div class="n">Losa Radiante</div>
+          <div class="s">Piso radiante</div>
+        </div>
+        <div>
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 2v12M6 2v12M9 2v12M12 2v12"/></svg></div>
+          <div class="n">Radiadores</div>
+          <div class="s">Sistemas hidrónicos</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORTINAS -->
+  <section data-theme="dark" data-chapter="Cortinas">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">06</span>
+          <span class="eyebrow">Persianas, toldos y cortinas</span>
+        </div>
+      </div>
+      <div class="showcase reverse">
+        <div class="vis reveal" style="aspect-ratio:4/5">
+          <img src="imagenes2/6-Persianas.png" alt="Persianas y cortinas inteligentes" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+        <div class="copy">
+          <h2 class="h2 reveal d1">Calidad y confort,<br/>al milímetro.</h2>
+          <p class="lede reveal d2" style="margin-top:24px">Apertura total, parcial o programada — con porcentaje exacto. Aprovechá la luz natural y reducí el consumo eléctrico aprovechando la inteligencia solar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEGURIDAD -->
+  <section id="seguridad" class="light" data-theme="light" data-chapter="Seguridad">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">07</span>
+          <span class="eyebrow">Seguridad integral</span>
+        </div>
+        <p class="lede reveal" style="max-width:36ch">Protección invisible ante cualquier circunstancia. Una sola red que combina audio, luz, accesos, cámaras y sensores.</p>
+      </div>
+
+      <div class="showcase">
+        <div class="copy">
+          <h2 class="h2 reveal">Cada dispositivo<br/>hablándose<br/>entre sí.</h2>
+          <p class="lede reveal d1" style="margin-top:24px">Cuando un sensor detecta presencia, las luces reaccionan, el audio responde y las cámaras se activan. Una respuesta orquestada — no una alarma aislada.</p>
+        </div>
+        <div class="vis tex light-tex security-vis reveal d2" style="aspect-ratio:1/1">
+          <div class="sec-ring r3"></div>
+          <div class="sec-ring r2"></div>
+          <div class="sec-ring r1"></div>
+          <div class="sec-core"><div class="dot"></div></div>
+          <div class="sec-tag" style="top:8%;left:10%">Cámaras</div>
+          <div class="sec-tag" style="top:14%;right:8%">Sensores</div>
+          <div class="sec-tag" style="bottom:14%;left:8%">Accesos</div>
+          <div class="sec-tag" style="bottom:10%;right:10%">Audio + Luz</div>
+          <div class="sec-tag" style="top:48%;left:-2%">Alarma</div>
+          <div class="sec-tag" style="top:48%;right:-2%">Comunicador</div>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="fcard reveal">
+          <div class="num">07.1</div>
+          <div class="t">Control de puertas y portones</div>
+          <p class="body-m" style="color:#3a3a3c">Apertura desde cualquier dispositivo móvil, a amplias distancias. Sin mandos físicos. Sin riesgo de clonación. Previsualización por cámara antes de abrir.</p>
+        </div>
+        <div class="fcard reveal d1">
+          <div class="num">07.2</div>
+          <div class="t">Historial de accesos</div>
+          <p class="body-m" style="color:#3a3a3c">Registro completo de quién entra, cuándo y por dónde. Visible y auditable desde Sophia App.</p>
+        </div>
+        <div class="fcard reveal d2">
+          <div class="num">07.3</div>
+          <div class="t">Cámaras integradas</div>
+          <p class="body-m" style="color:#3a3a3c">Video en vivo y grabación, embebido en la misma app que controla todo lo demás. Entrar y salir, siempre con la información a la vista.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESCENAS -->
+  <section id="escenas" data-theme="dark" data-chapter="Escenas">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">08</span>
+          <span class="eyebrow">Escenas y rutinas</span>
+        </div>
+      </div>
+
+      <h2 class="h1 reveal" style="max-width:18ch">Un toque.<br/>Un ambiente entero<br/>se transforma.</h2>
+
+      <div class="feature-grid">
+        <div class="fcard reveal">
+          <div class="num">Escena · Cine</div>
+          <div class="t">Modo Cine</div>
+          <p class="body-m">Cortinas al 100%, luces al 8%, audio en sala, clima a 22°. Un toque. Todo el living.</p>
+        </div>
+        <div class="fcard reveal d1">
+          <div class="num">Escena · Despertar</div>
+          <div class="t">Buenos días</div>
+          <p class="body-m">Persianas se abren con el sol, climatización gradual, playlist en cocina, primera taza programada.</p>
+        </div>
+        <div class="fcard reveal d2">
+          <div class="num">Escena · Noche</div>
+          <div class="t">Buenas noches</div>
+          <p class="body-m">Trabas activadas, todas las luces apagadas, modo nocturno en cuartos, audio off, clima al ralentí.</p>
+        </div>
+      </div>
+
+      <p class="body-l reveal" style="margin-top:48px;max-width:60ch">Activá escenas por voz, por toque, por horario o por agenda. Sophia adapta cada espacio a las situaciones que forman parte de tu día a día — sin que tengas que pensarlo.</p>
+    </div>
+  </section>
+
+  <!-- SMART GARDEN -->
+  <section data-theme="dark" data-chapter="Garden">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">09</span>
+          <span class="eyebrow">Smart Garden + Piscinas</span>
+        </div>
+      </div>
+      <div class="showcase">
+        <div class="vis green reveal">
+          <div class="vis-placeholder"><span class="lbl">Render · Jardín + Piscina</span></div>
+        </div>
+        <div class="copy">
+          <h2 class="h2 reveal d1">El afuera<br/>también es Sophia.</h2>
+          <p class="lede reveal d2" style="margin-top:24px">Smart Garden monitorea el clima en tiempo real para regar cuándo y cuánto haga falta. Y para la piscina: temperatura, PH, cloración, llenado, vaciado, luces — todo desde la app.</p>
+          <div class="pills reveal d3">
+            <span class="pill">Pronóstico en vivo</span>
+            <span class="pill">PH y cloro automático</span>
+            <span class="pill">Temperatura del agua</span>
+            <span class="pill">Luces de pileta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAIA -->
+  <section id="gaia" class="gaia" data-theme="dark" data-chapter="Gaia">
+    <div class="wrap">
+      <div class="section-head" style="margin-bottom:48px">
+        <div class="label">
+          <span class="num">10</span>
+          <span class="eyebrow">Gaia by Sophia</span>
+        </div>
+      </div>
+      <div class="gaia-stage">
+        <div class="gaia-key reveal">
+          <div class="glyph">GAIA</div>
+        </div>
+        <div>
+          <h2 class="h1 reveal" style="max-width:14ch">Diseño que cautiva.<br/>Inteligencia<br/>que ilumina.</h2>
+          <p class="lede reveal d1" style="margin-top:24px;max-width:38ch">La tecla inteligente que reemplaza al interruptor tradicional. Una sola superficie controla luz, audio, clima, cortinas y escenas. Sensor de temperatura embebido.</p>
+          <div class="gaia-feat reveal d2">
+            <div><div class="t">Activación de escenas</div><div class="d">Ejecutá rutinas programadas con un solo toque.</div></div>
+            <div><div class="t">Control de luces</div><div class="d">Encendido, apagado, dimmer y color por ambiente.</div></div>
+            <div><div class="t">Audio distribuido</div><div class="d">Volumen y fuente sin abrir la app.</div></div>
+            <div><div class="t">Cortinas y toldos</div><div class="d">Apertura gradual o total con precisión.</div></div>
+            <div><div class="t">Climatización</div><div class="d">Sensor embebido para regulación térmica precisa.</div></div>
+            <div><div class="t">Emergencia</div><div class="d">Protocolos automáticos cuando hace falta.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ SOPHIA -->
+  <section class="light" data-theme="light" data-chapter="Por qué">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">11</span>
+          <span class="eyebrow">Por qué Sophia</span>
+        </div>
+        <h2 class="h2 reveal" style="max-width:14ch">Tu entorno.<br/>Tu sistema.</h2>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar reveal">
+          <div class="pn">Pilar 01</div>
+          <h3>Robustez y seguridad</h3>
+          <p>Interconexión, procesamiento distribuido y procesos redundantes. Cada espacio funciona como su propio servidor — incluso sin internet — y responde en milisegundos.</p>
+        </div>
+        <div class="pillar reveal d1">
+          <div class="pn">Pilar 02</div>
+          <h3>Arquitectura distribuida</h3>
+          <p>Topología ambiente por ambiente, con unidades de proceso bajo estándares militares. Sistema descentralizado, sin puntos críticos. Cada controlador gestiona su zona de forma independiente.</p>
+        </div>
+        <div class="pillar reveal d2">
+          <div class="pn">Pilar 03</div>
+          <h3>Solución escalable</h3>
+          <p>Crece con vos. Trabaja ambiente por ambiente y se integra en red. La inversión se ajusta exactamente al proyecto — sin sobredimensionar, sin limitar.</p>
+        </div>
+        <div class="pillar reveal d3">
+          <div class="pn">Pilar 04</div>
+          <h3>Cableado único</h3>
+          <p>Solo 2 conductores + alimentación. Todos los dispositivos Smart Sophia se comunican por un único par de cables con un ID único de serie. Instalación limpia, mantenimiento simple.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:96px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start">
+        <h3 class="h3 reveal" style="max-width:20ch">Economía y ecología.</h3>
+        <p class="body-l reveal d1" style="color:#3a3a3c">Reducimos el consumo de energía, minimizamos las emisiones de CO₂ y eliminamos el plomo en la fabricación de controladoras y luminarias. Cumplimos con normas internacionales de cuidado ambiental — porque la inteligencia también es responsabilidad.</p>
+      </div>
+
+      <div class="num-list reveal" style="background:rgba(0,0,0,0.08);border-color:rgba(0,0,0,0.08)">
+        <div style="background:var(--paper)">
+          <div class="v" style="color:#1d1d1f">2</div>
+          <div class="l" style="color:#6e6e73">Conductores + alimentación</div>
+        </div>
+        <div style="background:var(--paper)">
+          <div class="v" style="color:#1d1d1f">0ms</div>
+          <div class="l" style="color:#6e6e73">Respuesta local · sin internet</div>
+        </div>
+        <div style="background:var(--paper)">
+          <div class="v" style="color:#1d1d1f">∞</div>
+          <div class="l" style="color:#6e6e73">Ambientes escalables</div>
+        </div>
+        <div style="background:var(--paper)">
+          <div class="v" style="color:#1d1d1f">0Pb</div>
+          <div class="l" style="color:#6e6e73">Libre de plomo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <section id="app" data-theme="dark" data-chapter="App">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="label">
+          <span class="num">12</span>
+          <span class="eyebrow">Sophia App</span>
+        </div>
+      </div>
+      <div class="app-grid">
+        <div>
+          <h2 class="h1 reveal" style="max-width:14ch">Intuitiva.<br/>Elegante.<br/>Poderosa.</h2>
+          <p class="lede reveal d1" style="margin-top:32px;max-width:44ch">Una sola app, desde cualquier parte del mundo. Audio, iluminación, climatización, accesos, seguridad, escenas, control remoto universal — y toda la línea Smart Tech by Sophia, incluyendo Gaia y la categoría Smart Roof.</p>
+          <div class="pills reveal d2" style="margin-top:32px">
+            <span class="pill">iOS · Android</span>
+            <span class="pill">Watch · Tablet</span>
+            <span class="pill">Control por voz</span>
+            <span class="pill">Acceso remoto global</span>
+          </div>
+        </div>
+        <div class="reveal d2">
+          <div class="phone">
+            <div class="notch"></div>
+            <div class="phone-screen">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px">
+                <div class="app-hello">Hola</div>
+                <div class="app-hello">21:48</div>
+              </div>
+              <div class="app-greeting">Buenas noches.<br/><span class="g">Modo descanso</span> en 10 min.</div>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+                <div class="app-tile">
+                  <div>
+                    <div class="tn">Living</div>
+                    <div class="ts">Luces · Audio · Clima</div>
+                  </div>
+                  <div class="tv">22°</div>
+                </div>
+                <div class="app-tile">
+                  <div>
+                    <div class="tn">Dormitorio principal</div>
+                    <div class="ts">3 dispositivos activos</div>
+                  </div>
+                  <div class="app-dial"></div>
+                </div>
+                <div class="app-tile">
+                  <div>
+                    <div class="tn">Piscina</div>
+                    <div class="ts">26° · PH 7.3</div>
+                  </div>
+                  <div class="tv">ON</div>
+                </div>
+                <div class="app-tile">
+                  <div>
+                    <div class="tn">Accesos</div>
+                    <div class="ts">Portón · Ingreso · Service</div>
+                  </div>
+                  <div class="tv">SEGURO</div>
+                </div>
+              </div>
+              <div style="margin-top:auto;display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)">
+                <div class="ts" style="font-size:11px;color:var(--muted)">Decir &ldquo;Sophia&hellip;&rdquo;</div>
+                <div class="ts" style="font-size:11px;color:var(--gold)">●</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contacto" class="cta" data-theme="dark" data-chapter="Contacto">
+    <div class="cta-glow"></div>
+    <div class="wrap">
+      <div class="eyebrow reveal" style="margin-bottom:24px">Siguiente paso</div>
+      <h2 class="display reveal d1">Coordinemos<br/>una visita.</h2>
+      <p class="lede reveal d2">Cada proyecto Sophia se diseña a medida. Visitamos el espacio, escuchamos la rutina y armamos una propuesta personalizada — ambiente por ambiente.</p>
+      <div class="btn-row reveal d3">
+        <a href="#" class="btn">Coordinar visita →</a>
+        <a href="#" class="btn btn-ghost">Descargar propuesta</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="col">
+        <div class="h">Sophia</div>
+        <div class="mono" style="font-size:13px;color:var(--muted)">Smart Living · Hogares Inteligentes</div>
+      </div>
+      <div class="col">
+        <div class="h">Sistema</div>
+        <a href="#luces">Iluminación</a>
+        <a href="#audio">Audio Multiroom</a>
+        <a href="#clima">Climatización</a>
+        <a href="#seguridad">Seguridad</a>
+      </div>
+      <div class="col">
+        <div class="h">Línea Smart</div>
+        <a href="#gaia">Gaia</a>
+        <a href="#">Smart LED</a>
+        <a href="#">Smart Roof · Livo</a>
+        <a href="#">Smart Roof · Lyra</a>
+      </div>
+      <div class="col">
+        <div class="h">Contacto</div>
+        <a href="#">soulhi.com.ar</a>
+        <a href="#">hola@soulhi.com.ar</a>
+      </div>
+    </div>
+    <div class="wrap legal">
+      <div>© 2026 Sophia · Soul Hi. Todos los derechos reservados.</div>
+      <div class="mono">Propuesta comercial · v1</div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Theme-aware nav (auto-switch on light sections)
+  const nav = document.getElementById('nav');
+  const sections = [...document.querySelectorAll('section[data-theme]')];
+  const navIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.intersectionRatio > 0.5) {
+        const t = e.target.getAttribute('data-theme');
+        nav.classList.toggle('is-light', t === 'light');
+      }
+    });
+  }, { threshold: [0.5] });
+  sections.forEach(s => navIO.observe(s));
+
+  // Chapter dots
+  const dotWrap = document.getElementById('chapterDots');
+  sections.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'cd';
+    b.title = s.getAttribute('data-chapter') || '';
+    b.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    dotWrap.appendChild(b);
+  });
+  const dots = [...dotWrap.children];
+  const dotIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const idx = sections.indexOf(e.target);
+      if (e.isIntersecting && e.intersectionRatio > 0.4) {
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[idx]) dots[idx].classList.add('active');
+      }
+    });
+  }, { threshold: [0.4] });
+  sections.forEach(s => dotIO.observe(s));
+</script>
+
+</body>
+</html>
